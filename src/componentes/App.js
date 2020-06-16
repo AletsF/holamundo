@@ -4,6 +4,7 @@ import Faker from 'faker'
 //import Regards from './regards'
 import Comments from './comments'
 import Button from './button'
+import InputComment from './inputComment'
 //Creacion componente
 //
 //Componentes Funionales
@@ -27,8 +28,12 @@ class App extends React.Component {
         //this.ChangeAlejandra = this.ChangeAlejandra.bind(this)
         //this.ChangeJose = this.ChangeJose.bind(this)*
         this.state = {
-            comments: []
+            comments: [],
+            commentText: '',
+            name: ''
         }
+        this.addComment = this.addComment.bind(this)
+        this.deleteComment = this.deleteComment.bind(this)
     }
     /*
     ChangeAngelica(){
@@ -48,11 +53,39 @@ class App extends React.Component {
     addComment(){
         let comment = {
             userAvatar: Faker.image.avatar(),
-            name: Faker.name.firstName,
+            //name: Faker.name.firstName(),
+            name: this.state.name,
             date: Date.now().toLocaleString(),
-            comment: Faker.lorem.paragraph()
+            //comment: Faker.lorem.paragraph()
+            comment: this.state.commentText
+
         }
-        this.setState({comments: comment})
+        console.log('state', this)
+        //let copyState = {...this.state.comments, comments: this.state.comments.push(comment)}
+        let copyState = this.state.comments
+        copyState.push(comment)
+        //this.setState({comments: comment})
+        //this.setState({comments: copyState})
+        this.setState({comments: copyState})
+        this.setState({commentText: ''})
+    }
+
+    deleteComment(){
+        /*let copyState = this.state.comments
+        copyState.pop()
+        this.setState({comments: copyState})*/
+        let copyComments = this.state.comments
+        copyComments.pop()
+        let copyState = {...this.state.comments, comments: copyComments}
+        this.setState(copyState)
+    }
+
+    handlerComment(e){
+        this.setState({commentText: e.target.value})
+    }
+
+    handlerName(e){
+        this.setState({name: e.target.value})
     }
 
     render() {
@@ -70,13 +103,18 @@ class App extends React.Component {
                 <button onClick={() => this.ChangeState({name: 'Angelica', lastname: 'Loranca'})}>Alejandra</button>
                 <button onClick={() => this.ChangeState({name: 'Maria Alejandra', lastname: 'Fonseca'})}>Angelica</button>
                 <button onClick={() => this.ChangeState({name: 'Jose Alejandro', lastname: 'Rojas'})}>Jose</button>
-                */}
-                <Button/>
+                
+                <Button/>*/}
+                <InputComment handler={(e) => this.handlerName(e)} value={this.state.name}></InputComment>
+                <InputComment handler={(e) => this.handlerComment(e)} value={this.state.commentText}></InputComment>
+                <Button func={this.addComment} text={'Comentar'}/>
+                <Button func={this.deleteComment} text={'Borrar'}/>
                 {
                     this.state.comments.map((comment) => {
-                        return <Comments 
-                            name={comment.userAvatar} 
-                            userAvatar={comment.name}
+                        return <Comments
+                            key={comment.name} 
+                            userAvatar={comment.userAvatar} 
+                            name={comment.name}
                             date={comment.date}
                             comment={comment.comment}
                         />
